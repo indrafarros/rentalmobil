@@ -115,7 +115,6 @@
                 ]
             });
 
-
             $("#createNewRole").click(function(e) {
                 e.preventDefault();
                 $('#modalTitle').html('Add new role');

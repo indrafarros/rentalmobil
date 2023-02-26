@@ -24,11 +24,19 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('permission', [PermissionController::class, 'index']);
+    Route::group(['prefix' => 'permission'], function () {
+        Route::get('/', [PermissionController::class, 'index'])->name('admin.permission.index');
+        Route::post('create', [PermissionController::class, 'store'])->name('admin.permission.store');
+        Route::get('edit/{id}', [PermissionController::class, 'edit'])->name('admin.permission.edit');
+        Route::put('update/{id}', [PermissionController::class, 'update'])->name('admin.permission.update');
+        Route::delete('destroy/{id}', [PermissionController::class, 'destroy'])->name('admin.permission.destroy');
+    });
 
-    Route::get('role', [RoleController::class, 'index'])->name('admin.role.index');
-    Route::post('role/create', [RoleController::class, 'store'])->name('admin.role.store');
-    Route::get('role/edit/{id}', [RoleController::class, 'edit'])->name('admin.role.edit');
-    Route::put('role/update/{id}', [RoleController::class, 'update'])->name('admin.role.update');
-    Route::delete('role/destroy/{id}', [RoleController::class, 'destroy'])->name('admin.role.destroy');
+    Route::group(['prefix' => 'role'], function () {
+        Route::get('/', [RoleController::class, 'index'])->name('admin.role.index');
+        Route::post('create', [RoleController::class, 'store'])->name('admin.role.store');
+        Route::get('edit/{id}', [RoleController::class, 'edit'])->name('admin.role.edit');
+        Route::put('update/{id}', [RoleController::class, 'update'])->name('admin.role.update');
+        Route::delete('destroy/{id}', [RoleController::class, 'destroy'])->name('admin.role.destroy');
+    });
 });

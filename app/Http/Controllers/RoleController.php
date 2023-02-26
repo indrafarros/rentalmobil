@@ -44,8 +44,7 @@ class RoleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $role = Role::where('id', $id)->first();
-        $role->update([
+        $role = Role::where('id', $id)->update([
             'name' => $request->name
         ]);
         return response()->json(['status' => true, 'message' => 'Data has been updated', $role]);
@@ -55,7 +54,6 @@ class RoleController extends Controller
     {
         $roles = Role::findOrFail($id);
         $roles->delete();
-
         return response()->json(['status' => true, 'message' => 'Your data has been deleted']);
     }
 }
