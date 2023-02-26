@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +20,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('admin.layouts.main');
+});
+
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('permission', [PermissionController::class, 'index']);
+    Route::get('role', [RoleController::class, 'index'])->name('admin.role');
 });
