@@ -18,8 +18,7 @@
                 <!-- Page title actions -->
                 <div class="col-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
-                            data-bs-target="#modal-report">
+                        <a href="#" class="btn btn-primary d-none d-sm-inline-block" id="createNewRole">
                             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -30,17 +29,6 @@
                             </svg>
                             Add new role
                         </a>
-                        <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
-                            data-bs-target="#modal-report" aria-label="Create new report">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M12 5l0 14" />
-                                <path d="M5 12l14 0" />
-                            </svg>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -50,7 +38,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-vcenter ">
+                    <table id="roleTable" class="table table-sm">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -59,44 +47,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($roles as $item)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td class="text-muted">
-                                        {{ ucfirst($item->name) }}
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group" aria-label="Basic example">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-eye" width="24" height="24"
-                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                                    <path
-                                                        d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7">
-                                                    </path>
-                                                </svg>
-                                                View Permission</a>
-                                            <a href="#" class="btn btn-danger btn-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-trash" width="24" height="24"
-                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M4 7l16 0"></path>
-                                                    <path d="M10 11l0 6"></path>
-                                                    <path d="M14 11l0 6"></path>
-                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                                </svg>
-                                                Delete</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-
 
                         </tbody>
                     </table>
@@ -104,4 +54,173 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-3" id="modalTitle"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRole" name="formRole" class="form-horizontal">
+                        <input type="hidden" name="role_id" id="role_id">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Enter Name" maxlength="50" required>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" type="submit" id="saveBtn" class="btn btn-primary">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('js')
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $(document).ready(function() {
+
+            var table = $('#roleTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('admin.role.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+
+
+            $("#createNewRole").click(function(e) {
+                e.preventDefault();
+                $('#modalTitle').html('Add new role');
+                $('#role_id').val('');
+                $('#roleModal').modal('show');
+            });
+
+            $('#saveBtn').click(function(e) {
+                e.preventDefault();
+                var role_id = $('#role_id').val();
+
+                if (role_id == '') {
+                    var type = "POST";
+                    var url = "{{ route('admin.role.store') }}";
+                } else {
+                    var type = "PUT";
+                    var url = '/admin/role/update/' + role_id;
+                }
+                $.ajax({
+                    type: type,
+                    url: url,
+                    data: $('#formRole').serialize(),
+                    dataType: "JSON",
+                    success: function(result) {
+                        $('#roleModal').modal('hide');
+                        $('#formRole')[0].reset();
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: result.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        table.draw();
+                    },
+                    error: function(result) {
+                        console.log(result)
+                    }
+                })
+            })
+
+            $('body').on('click', '.edit', function(e) {
+                e.preventDefault();
+                var role_id = $(this).data('id');
+                $('#modalTitle').html('Update Role')
+                if (role_id) {
+                    let url = '/admin/role/edit/' + role_id;
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        success: function(result) {
+                            if (result.status == true) {
+                                $('#roleModal').modal('show');
+                                $('#role_id').val(result.data.id)
+                                $('#name').val(result.data.name)
+                            }
+                        },
+                        error: function(result) {
+
+                        }
+                    })
+                }
+            })
+
+
+            $('body').on('click', '.delete', function(e) {
+                e.preventDefault();
+                var role_id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let url = '/admin/role/destroy/' + role_id;
+                        data:
+                            $.ajax({
+                                type: "DELETE",
+                                url: url,
+                                success: function(result) {
+                                    Swal.fire({
+                                        position: 'center',
+                                        icon: 'success',
+                                        title: result.message,
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    table.draw();
+                                },
+                                error: function(result) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Something went wrong!<br> Error:' +
+                                            result,
+                                    })
+                                }
+                            })
+                    }
+                })
+            })
+        });
+    </script>
 @endsection

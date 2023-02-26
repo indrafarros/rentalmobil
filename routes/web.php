@@ -25,5 +25,10 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('permission', [PermissionController::class, 'index']);
-    Route::get('role', [RoleController::class, 'index'])->name('admin.role');
+
+    Route::get('role', [RoleController::class, 'index'])->name('admin.role.index');
+    Route::post('role/create', [RoleController::class, 'store'])->name('admin.role.store');
+    Route::get('role/edit/{id}', [RoleController::class, 'edit'])->name('admin.role.edit');
+    Route::put('role/update/{id}', [RoleController::class, 'update'])->name('admin.role.update');
+    Route::delete('role/destroy/{id}', [RoleController::class, 'destroy'])->name('admin.role.destroy');
 });

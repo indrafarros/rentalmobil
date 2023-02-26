@@ -14,12 +14,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>@yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+        integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <!-- CSS files -->
     <link href="{{ asset('dist/css/tabler.min.css?1674944402') }}" rel="stylesheet" />
-    <link href="{{ asset('dist/css/tabler-flags.min.css?1674944402') }}" rel="stylesheet" />
-    <link href="{{ asset('dist/css/tabler-payments.min.css?1674944402') }}" rel="stylesheet" />
-    <link href="{{ asset('dist/css/tabler-vendors.min.css?1674944402') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/demo.min.css?1674944402') }}" rel="stylesheet" />
+
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.2/datatables.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         @import url('https://rsms.me/inter/inter.css');
 
@@ -58,6 +63,7 @@
     <!-- Tabler Core -->
     <script src="{{ asset('dist/js/tabler.min.js?1674944402') }}" defer></script>
     <script src="{{ asset('dist/js/demo.min.js?1674944402') }}" defer></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.2/datatables.min.js"></script>
 
     @yield('js')
 </body>
