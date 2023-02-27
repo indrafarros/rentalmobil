@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'admin'], function () {
+
     Route::group(['prefix' => 'permission'], function () {
         Route::get('/', [PermissionController::class, 'index'])->name('admin.permission.index');
         Route::post('create', [PermissionController::class, 'store'])->name('admin.permission.store');
@@ -38,5 +40,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('edit/{id}', [RoleController::class, 'edit'])->name('admin.role.edit');
         Route::put('update/{id}', [RoleController::class, 'update'])->name('admin.role.update');
         Route::delete('destroy/{id}', [RoleController::class, 'destroy'])->name('admin.role.destroy');
+    });
+
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', [UserController::class, 'index'])->name('admin.user.index');
+        Route::post('create', [UserController::class, 'store'])->name('admin.user.store');
     });
 });

@@ -30,7 +30,7 @@ class RoleController extends Controller
         ]);
 
         $save = Role::create([
-            'name' => $request->name,
+            'name' => strtolower($request->name),
             'guard_name' => 'web'
         ]);
         return response()->json(['status' => true, 'message' => 'Your data has been created', 'data' => $save]);

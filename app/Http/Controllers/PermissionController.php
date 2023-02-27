@@ -30,7 +30,7 @@ class PermissionController extends Controller
         ]);
 
         $save = Permission::create([
-            'name' => $request->name,
+            'name' => strtolower($request->name),
             'guard_name' => 'web'
         ]);
         return response()->json(['status' => true, 'message' => 'Your data has been created', 'data' => $save]);
